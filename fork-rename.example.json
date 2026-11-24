@@ -1,5 +1,6 @@
 {
   "style": "domain",
+  "terminal": "untitled",
   "domains": [],
   "language": "auto",
   "min_prompt_chars": 4,
