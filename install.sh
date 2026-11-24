@@ -4,6 +4,10 @@
 #   ./install.sh              install / update
 #   ./install.sh --uninstall  remove the hook entry (keeps your config file)
 #
+# Also works piped, with no checkout on disk -- it fetches what it needs:
+#
+#   curl -fsSL https://raw.githubusercontent.com/ShadowNearby/claude-fork-rename/main/install.sh | bash
+#
 # Touches only your Claude config dir ($CLAUDE_CONFIG_DIR, else ~/.claude):
 #   hooks/fork-rename.py   the hook itself
 #   settings.json          one UserPromptSubmit entry, merged in (backed up)
@@ -11,7 +15,8 @@
 set -euo pipefail
 
 CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
-SRC_DIR="$(cd "$(dirname "$0")" && pwd)"
+SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || echo .)"
+RAW_BASE="${FORK_RENAME_RAW:-https://raw.githubusercontent.com/ShadowNearby/claude-fork-rename/main}"
 SETTINGS="$CONFIG_DIR/settings.json"
 # Kept as a literal so settings.json stays portable between machines.
 HOOK_CMD='python3 -I "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/fork-rename.py"'
@@ -24,6 +29,19 @@ if [ "$MODE" = "--uninstall" ]; then
   MODE=uninstall
 elif [ "$MODE" != "install" ]; then
   echo "用法 / usage: $0 [--uninstall]" >&2; exit 2
+fi
+
+if [ "$MODE" = "install" ] && [ ! -f "$SRC_DIR/fork-rename.py" ]; then
+  # Piped, or run from somewhere else: fetch the files this needs.
+  command -v curl >/dev/null || { echo "需要 curl / curl required" >&2; exit 1; }
+  FETCH_DIR="$(mktemp -d)"
+  trap 'rm -rf "$FETCH_DIR"' EXIT
+  for f in fork-rename.py fork-rename.example.json; do
+    curl -fsSL "$RAW_BASE/$f" -o "$FETCH_DIR/$f" \
+      || { echo "下载失败 / download failed: $RAW_BASE/$f" >&2; exit 1; }
+  done
+  SRC_DIR="$FETCH_DIR"
+  echo "下载到临时目录 / fetched into: $FETCH_DIR"
 fi
 
 if [ "$MODE" = "install" ]; then
@@ -108,6 +126,11 @@ if os.path.exists(path + ".fork-rename.bak"):
 PY
 
 if [ "$MODE" = "install" ]; then
+  if [ -f "$SRC_DIR/fork-topics.py" ]; then
+    TOPICS_HINT="python3 $SRC_DIR/fork-topics.py"
+  else
+    TOPICS_HINT="克隆仓库后跑 fork-topics.py / clone the repo and run fork-topics.py"
+  fi
   cat <<EOS
 
 下一步 / next:
@@ -115,7 +138,7 @@ if [ "$MODE" = "install" ]; then
      edit "domains" to the modules you actually work on
   2. 新开的 fork 会话从第一条有内容的 prompt 起自动改名
      new forks rename themselves from their first real prompt
-  3. 侧边栏里现有的那些同名 fork：python3 $SRC_DIR/fork-topics.py
+  3. 侧边栏里现有的那些同名 fork：$TOPICS_HINT
      for forks already in your sidebar, see what each one did
 EOS
 else

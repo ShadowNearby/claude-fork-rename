@@ -1,0 +1,12 @@
+{
+  "name": "fork-rename",
+  "displayName": "Fork Rename",
+  "description": "Gives every forked Claude Code session a name of its own, instead of a sidebar full of \"(fork)\"",
+  "version": "0.2.0",
+  "author": {
+    "name": "Jingsheng Yan"
+  },
+  "repository": "https://github.com/ShadowNearby/claude-fork-rename",
+  "license": "MIT",
+  "keywords": ["sessions", "hooks", "naming", "productivity"]
+}

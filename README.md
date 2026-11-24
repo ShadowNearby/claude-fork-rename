@@ -30,13 +30,38 @@ Today
 
 ## Install
 
+Pick one.
+
+**As a plugin** — one line in a session, on Claude Code 2.1.275 or later:
+
+```
+/plugin install fork-rename --marketplace ShadowNearby/claude-fork-rename
+```
+
+On earlier versions, two steps:
+
+```
+/plugin marketplace add ShadowNearby/claude-fork-rename
+/plugin install fork-rename@claude-fork-rename
+```
+
+**As a one-liner** in your shell:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ShadowNearby/claude-fork-rename/main/install.sh | bash
+```
+
+**From a checkout**, which also gets you `fork-topics.py`:
+
 ```bash
 git clone https://github.com/ShadowNearby/claude-fork-rename
 cd claude-fork-rename && ./install.sh
 ```
 
-Everything lands in your Claude config directory (`$CLAUDE_CONFIG_DIR`,
-`~/.claude` by default):
+The plugin keeps the hook inside itself and registers it from there, so your
+`settings.json` gains nothing but the plugin being enabled. The script routes
+install into your Claude config directory (`$CLAUDE_CONFIG_DIR`, `~/.claude` by
+default) instead:
 
 | File | What it is |
 | --- | --- |
@@ -44,8 +69,9 @@ Everything lands in your Claude config directory (`$CLAUDE_CONFIG_DIR`,
 | `settings.json` | one merged `UserPromptSubmit` entry (backed up first) |
 | `fork-rename.json` | your config, left alone if it already exists |
 
-It takes effect in **sessions started afterwards**. Remove it with
-`./install.sh --uninstall`, which only takes out its own entry.
+Either way it takes effect in **sessions started afterwards**, and both read the
+same `~/.claude/fork-rename.json`. To remove it: `/plugin uninstall fork-rename`,
+or `./install.sh --uninstall`, which only takes out its own entry.
 
 ## How it works
 

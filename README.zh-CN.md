@@ -29,11 +29,37 @@ Fork 几次之后，侧边栏就是一排一模一样的行：
 
 ## 怎么装
 
-```bash
-git clone <this repo> && cd claude-fork-rename && ./install.sh
+三条路，任选一条。
+
+**当插件装** —— 在会话里一条命令（Claude Code 2.1.275 及以后）：
+
+```
+/plugin install fork-rename --marketplace ShadowNearby/claude-fork-rename
 ```
 
-装的东西全在你的 Claude 配置目录（`$CLAUDE_CONFIG_DIR`，默认 `~/.claude`）里：
+更早的版本分两步：
+
+```
+/plugin marketplace add ShadowNearby/claude-fork-rename
+/plugin install fork-rename@claude-fork-rename
+```
+
+**一行命令**（在终端里）：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ShadowNearby/claude-fork-rename/main/install.sh | bash
+```
+
+**克隆下来装**，顺带拿到 `fork-topics.py`：
+
+```bash
+git clone https://github.com/ShadowNearby/claude-fork-rename
+cd claude-fork-rename && ./install.sh
+```
+
+插件那条路把 hook 留在插件自己里面并从那儿注册，你的 `settings.json` 除了多一个
+「插件已启用」之外什么都不变。脚本那两条路是装进你的 Claude 配置目录
+（`$CLAUDE_CONFIG_DIR`，默认 `~/.claude`）：
 
 | 文件 | 作用 |
 | --- | --- |
@@ -41,7 +67,8 @@ git clone <this repo> && cd claude-fork-rename && ./install.sh
 | `settings.json` | 加一条 `UserPromptSubmit` 记录（改前自动备份） |
 | `fork-rename.json` | 配置，已存在就不动 |
 
-装完**新开的会话**才生效。卸载：`./install.sh --uninstall`。
+两种都是**新开的会话**才生效，也都读同一份 `~/.claude/fork-rename.json`。卸载：
+`/plugin uninstall fork-rename`，或者 `./install.sh --uninstall`（只摘自己那条）。
 
 ## 配置
 

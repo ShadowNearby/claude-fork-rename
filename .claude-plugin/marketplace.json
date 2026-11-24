@@ -1,0 +1,15 @@
+{
+  "name": "claude-fork-rename",
+  "description": "One plugin: give every forked Claude Code session a name of its own",
+  "owner": {
+    "name": "Jingsheng Yan",
+    "url": "https://github.com/ShadowNearby"
+  },
+  "plugins": [
+    {
+      "name": "fork-rename",
+      "source": "./",
+      "description": "Forked sessions rename themselves on their first real prompt, instead of inheriting the parent's name"
+    }
+  ]
+}
