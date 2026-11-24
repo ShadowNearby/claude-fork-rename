@@ -1,0 +1,9 @@
+{
+  "style": "domain",
+  "domains": [],
+  "language": "auto",
+  "min_prompt_chars": 4,
+  "skip_prefixes": ["/", "!"],
+  "extra_filler": [],
+  "remind_once": true
+}
